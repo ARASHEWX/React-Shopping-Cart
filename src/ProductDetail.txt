@@ -1,0 +1,78 @@
+// This is the first implemention of ProductDetail component, It is faster but have bug when user type the product Url directly like this : locallhost:products/2
+
+import React, {useContext} from 'react';
+import { Link , useParams} from 'react-router-dom';
+
+// Context
+import { ProductsContext } from '../context/ProductContextProvider';
+
+// Style
+import styles from "./ProductDetails.module.css";
+
+const ProductDetails = (props) => {
+    const params = useParams();
+    const id = params.id;
+    const data = useContext(ProductsContext);
+    const product = data[id - 1];
+    const {image, title, description, price, category} = product;
+
+    return (
+        <div className={styles.container}>
+            <img className={styles.image} src={image} alt="product" />
+            <div className={styles.textContainer}>
+                <h3>{title}</h3>
+                <p className={styles.description}>{description}</p>
+                <p className={styles.category}><span>Category:</span> {category}</p>
+                <div className={styles.buttonContainer}>
+                    <span className={styles.price}>{price} $</span>
+                    <Link to="/products">Back to Shop</Link>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default ProductDetails;
+
+
+//This is the secound implemention of ProductDetail component, it is a bit slow but havo no bug 
+
+import React, { useEffect , useState} from 'react';
+import { Link , useParams} from 'react-router-dom';
+import axios from 'axios';
+
+// Style
+import styles from "./ProductDetails.module.css";
+
+const ProductDetails = (props) => {
+    const params = useParams();
+    const id = params.id;
+    const [data , setData] = useState({});
+    useEffect(() => {
+        const fetchApi = async () => {
+            const response = await axios.get(`https://fakestoreapi.com/products/${id}`);
+            setData(response.data);
+        }
+        fetchApi();
+    } , [] );
+    
+    const {image, title, description, price, category} = data;
+
+    return (
+        <div className={styles.container}>
+            <img className={styles.image} src={image} alt="product" />
+            <div className={styles.textContainer}>
+                <h3>{title}</h3>
+                {console.log(props)}
+                <p className={styles.description}>{description}</p>
+                <p className={styles.category}><span>Category:</span> {category}</p>
+                <div className={styles.buttonContainer}>
+                    <span className={styles.price}>{price} $</span>
+                    <Link to="/products">Back to Shop</Link>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default ProductDetails;
